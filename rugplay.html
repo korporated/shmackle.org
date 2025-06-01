@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rugplay Money Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #8a2be2;
+            --primary-dark: #5a189a;
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --text: #e0e0e0;
+            --success: #4caf50;
+            --error: #f44336;
+            --warning: #ff9800;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+            border: 1px solid var(--primary);
+        }
+        
+        .header {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .status {
+            margin-left: auto;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .console {
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.2);
+            position: relative;
+            display: none; /* Initially hidden */
+        }
+        
+        .console-line {
+            margin-bottom: 10px;
+            line-height: 1.4;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .prompt {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .success {
+            color: var(--success);
+        }
+        
+        .error {
+            color: var(--error);
+        }
+        
+        .warning {
+            color: var(--warning);
+        }
+        
+        .form-group {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        .vouches {
+            padding: 15px 20px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-top: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        
+        .vouches-title {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .vouch {
+            background-color: rgba(138, 43, 226, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary);
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        .vouch-user {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .vouch-message {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        /* Animation delays for vouches */
+        .vouch:nth-child(1) { animation-delay: 0.5s; }
+        .vouch:nth-child(2) { animation-delay: 1s; }
+        .vouch:nth-child(3) { animation-delay: 1.5s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Rugplay Money Generator</div>
+            <div class="status">ONLINE</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username">
+            
+            <label for="amount">Amount ($)</label>
+            <input type="number" id="amount" placeholder="Enter amount to generate">
+            
+            <button id="generate-btn">Generate Money</button>
+        </div>
+        
+        <div class="console" id="console">
+            <!-- Console content will be added dynamically -->
+        </div>
+        
+        <div class="vouches">
+            <div class="vouches-title">Vouches</div>
+            
+            <div class="vouch">
+                <div class="vouch-user">@kingvon</div>
+                <div class="vouch-message">Wow this worked ril!!</div>
+            </div>
+            
+            <div class="vouch">
+                <div class="vouch-user">@dexter</div>
+                <div class="vouch-message">Dexter Morgan working mhm gave me millions</div>
+            </div>
+            
+            <div class="vouch">
+                <div class="vouch-user">@face</div>
+                <div class="vouch-message">FaceDev only legit money generater</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generate-btn');
+            const consoleElement = document.getElementById('console');
+            
+            generateBtn.addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const amount = document.getElementById('amount').value;
+                
+                if (!username || !amount) {
+                    alert('Please enter both username and amount');
+                    return;
+                }
+                
+                // Show console
+                consoleElement.style.display = 'block';
+                
+                // Clear console
+                consoleElement.innerHTML = '';
+                
+                // Add new console lines with animation
+                addConsoleLine('Initializing Rugplay transaction v3.2.1', '', 0);
+                addConsoleLine('User: ' + username, '', 300);
+                addConsoleLine('Amount: $' + amount, '', 600);
+                addConsoleLine('Checking stock...', 'success', 900);
+                addConsoleLine('Logging in to account with cookie', 'success', 1200);
+                addConsoleLine('Generating secure transaction', 'success', 1500);
+                addConsoleLine('Sending money...', 'success', 1800);
+                
+                // Random chance to fail (40% chance)
+                const shouldFail = Math.random() < 0.4;
+                const delay = shouldFail ? 2100 : 2400;
+                
+                setTimeout(() => {
+                    if (shouldFail) {
+                        addConsoleLine('Failed to fetch cookies, ping @k4xc in the Rugplay Server', 'error', 0);
+                    } else {
+                        addConsoleLine('Successfully sent $' + amount + ' to ' + username, 'success', 0);
+                        addConsoleLine('Transaction completed in 2.4s', '', 300);
+                    }
+                }, delay);
+            });
+            
+            function addConsoleLine(text, type, delay) {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'console-line';
+                    
+                    const prompt = document.createElement('span');
+                    prompt.className = 'prompt';
+                    prompt.textContent = '>';
+                    
+                    const content = document.createElement('span');
+                    if (type) content.className = type;
+                    content.textContent = ' ' + text;
+                    
+                    line.appendChild(prompt);
+                    line.appendChild(content);
+                    
+                    consoleElement.appendChild(line);
+                    
+                    // Scroll to bottom
+                    consoleElement.scrollTop = consoleElement.scrollHeight;
+                }, delay);
+            }
+        });
+    </script>
+</body>
+</html>
